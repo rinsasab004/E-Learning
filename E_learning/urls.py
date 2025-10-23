@@ -17,8 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from instructorApp import views
+from studentApp import views as studView
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('instructor/register',views.InstructorView.as_view(),name="instructor_reg")
-]
+    path('instructor/register',views.InstructorView.as_view(),name="instructor_reg"),
+
+    path('student/home',studView.StudentView.as_view(),name="student_view"),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
