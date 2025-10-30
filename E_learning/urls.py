@@ -26,5 +26,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('instructor/register',views.InstructorView.as_view(),name="instructor_reg"),
 
-    path('student/home',studView.StudentView.as_view(),name="student_view"),
+    path('student/register',studView.StudentRegister.as_view(),name="student_reg"),
+    path('student/login',studView.StudentLoginView.as_view(),name="student_log"),
+    path('',studView.StudentView.as_view(),name="student_view"),
+    path('course/detail/<int:id>',studView.CourseDetailView.as_view(),name="course_detail"),
+    path('add/cart/<int:id>',studView.AddToCartView.as_view(),name="add_to_cart"),
+    path('student/logout',studView.LogoutView.as_view(),name="student_logout"),
+    path('cart/summary',studView.CartSummary.as_view(),name="cart_summary"),
+    path('cart/delete/<int:id>',studView.CartDeleteView.as_view(),name="cart_delete"),
+    path('checkout',studView.CheckOutView.as_view(),name="checkout_view"),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -4,6 +4,7 @@ from django.db.models import signals
 from embed_video.fields import EmbedVideoField 
 from django.db.models import Max
 
+
 # Create your models here.
 class User(AbstractUser):
     options=(
@@ -74,6 +75,24 @@ class Lesson(models.Model):
         max_order=Lesson.objects.filter(module_instance=self.module_instance).aggregate(max=Max('order')).get('max') or 0
         self.order=max_order+1
         super().save(*args,**kwargs)
+
+class Cart(models.Model):
+    course_instance=models.ForeignKey(Course,on_delete=models.CASCADE,related_name="cart")
+    user_instance=models.ForeignKey(User,on_delete=models.CASCADE,related_name="user_cart")
+
+    def __str__(self):
+        return self.course_instance.title
+    
+class Order(models.Model):
+    course_instances=models.ManyToManyField(Course,related_name="order")
+    student=models.ForeignKey(User,on_delete=models.CASCADE)
+    total=models.DecimalField(max_digits=10,decimal_places=2,default=0)
+    is_paid=models.BooleanField(default=True)
+    rzp_order_id=models.CharField(max_length=100,null=True)
+    added_date=models.DateField(auto_now_add=True)
+
+    # def __str__(self):
+    #     return self.rzp_order_id
 
 
     

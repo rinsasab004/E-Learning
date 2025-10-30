@@ -22,7 +22,7 @@
                 <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium md:flex-row md:space-x-8 md:mt-0">
                     <li><a href="#" class="block py-2 pl-3 pr-4 text-white hover:text-purple-200">Home</a></li>
                     <li><a href="#" class="block py-2 pl-3 pr-4 text-white hover:text-purple-200">Courses</a></li>
-                    <li><a href="#" class="block py-2 pl-3 pr-4 text-white hover:text-purple-200">Resources</a></li>
+                    <li><a href="{% url 'student_logout' %}" class="block py-2 pl-3 pr-4 text-white hover:text-purple-200">Logout</a></li>
                     <li><a href="#" class="block py-2 pl-3 pr-4 text-white hover:text-purple-200">Contact</a></li>
                 </ul>
             </div>
@@ -54,10 +54,15 @@
 
                 <!-- Cart -->
                 <div class="relative group">
-                    <a href="#" class="text-white hover:text-purple-200">
+                    <a href="{% url 'cart_summary' %}" class="text-white hover:text-purple-200">
                         <i class="fas fa-shopping-cart text-xl"></i>
-                        <span
-                            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">2</span>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            {% if request.user.is_authenticated %}
+                               {{request.user.user_cart.all.count}}
+                            {% else %}
+                               0
+                            {% endif %}
+                        </span>
                         <span
                             class="hidden group-hover:block absolute top-full right-0 mt-2 bg-white text-purple-700 text-sm py-1 px-2 rounded shadow-lg whitespace-nowrap">Cart</span>
                     </a>
@@ -107,10 +112,10 @@
                         exercises.</p>
                     <div class="flex justify-between items-center">
                         <span class="text-purple-700 font-bold">{{course.price}}</span>
-                        <button
+                        <a href="{% url 'course_detail' course.id %}"
                             class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300">
                             Enroll Now
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
