@@ -8,11 +8,13 @@ from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.utils.decorators import method_decorator
 import razorpay
-from django.db.models import Sum
+from django.db.models import Sum,Count
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
-
+RZP_KEY_ID="rzp_test_RZC4DECmKenasN"
+RZP_KEY_SECRET="B3H1ygDzwXOoUHwv16l4Uphq"
 
 
 class StudentRegister(View):
@@ -52,7 +54,15 @@ class StudentLoginView(View):
 class StudentView(View):
     def get(self,request):
         courses=Course.objects.all()
-        return render(request,"student_home.html",{'courses':courses})
+        if request.user.is_authenticated:
+            purchased_courses=Order.objects.filter(student=request.user).values_list("course_instances",flat=True)
+            courses_count=Order.objects.filter(student=request.user).aggregate(count=Count("course_instances")).get("count") or 0
+            return render(request,"student_home.html",{'courses':courses,'purchased_courses':purchased_courses,'courses_count':courses_count})
+            
+        
+        else:
+            return render(request,"student_home.html",{'courses':courses})
+
 
 class CourseDetailView(View):
     def get(self,request,**kwargs):
@@ -104,7 +114,40 @@ class CheckOutView(View):
             for cart in cart_list:
                 order_instance.course_instances.add(cart.course_instance)
                 cart.delete()
-            
-        return render(request,"payment.html")
 
+
+            client = razorpay.Client(auth=(RZP_KEY_ID, RZP_KEY_SECRET))
+
+            DATA = {
+                "amount": float(total_price*100),
+                "currency": "INR",
+                "receipt": "receipt#1",
+             }
+            payment=client.order.create(data=DATA)
+            print(payment)
+            order_instance.rzp_order_id=payment.get("id")
+            order_instance.save()
+            context={
+                "amount":float(total_price*100),
+                "key":RZP_KEY_ID,
+                "order_id":payment.get("id")
+            }
+            return render(request,"payment.html",context)
+@method_decorator(csrf_exempt,name="dispatch")
+class PaymentConfirmation(View):
+    def post(self,request):
+        client=razorpay.Client(auth=(RZP_KEY_ID, RZP_KEY_SECRET))
+        res=client.utility.verify_payment_signature(request.POST)
+        print(res)
+        print(request.POST)
+        if res:
+            order_id=request.POST.get("razorpay_order_id")
+            order_instance=Order.objects.get(rzp_order_id=order_id)
+            order_instance.is_paid=True
+            order_instance.save()
+        return redirect("student_view")
+
+class Mycourses(View):
+    def get(self,request):
+        return render(request,"my_courses.html")
 

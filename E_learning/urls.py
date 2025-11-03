@@ -35,5 +35,11 @@ urlpatterns = [
     path('cart/summary',studView.CartSummary.as_view(),name="cart_summary"),
     path('cart/delete/<int:id>',studView.CartDeleteView.as_view(),name="cart_delete"),
     path('checkout',studView.CheckOutView.as_view(),name="checkout_view"),
+    path('confirm',studView.PaymentConfirmation.as_view(),name="confirm_payment"),
+    path('Mycourses',studView.Mycourses.as_view(),name="course_view"),
+    
+   
+    
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
