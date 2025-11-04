@@ -7,7 +7,7 @@
         <div class="bg-gray-900 w-full">
             <div class="max-w-screen-xl mx-auto px-4 py-8">
                 <div class="aspect-w-16 aspect-h-9">
-                    <iframe width="1280" height="400" src="{{course.thumbnail}}" title="YouTube video player"
+                    <iframe width="1280" height="400" src="{{lesson.video}}" title="YouTube video player"
                         frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -49,7 +49,12 @@
                                 {% for lesson in module.lesson.all %}
                                 <div class="flex items-center p-2 hover:bg-gray-50 rounded">
                                     <i class="fas fa-play-circle text-purple-600 mr-4"></i>
-                                    <span>{{forloop.counter}} : {{lesson.title}} </span>
+                                    <span>{{forloop.counter}} : 
+                                        <a href="{% url 'lesson_view' course.id %}?module={{module.id}}&lesson={{lesson.id}}">
+                                            {{lesson.title}}
+                                         </a>
+                                    </span>
+
                                     <span class="ml-auto text-gray-600">15 min</span>
                                 </div>
                                 {% endfor %}
@@ -61,41 +66,7 @@
                 </div>
             </div>
 
-            <!-- Course Sidebar -->
-            <div class="lg:col-span-1">
-                <div class="bg-white p-6 rounded-lg shadow-lg sticky top-24">
-                    <div class="text-3xl font-bold mb-4 text-purple-700">₹{{course.price}}</div>
-                    <a href="{% url 'add_to_cart' course.id %}">
-                        <button
-                            class="w-full bg-purple-600 text-white py-3 rounded-lg mb-4 hover:bg-purple-700 transition duration-300">
-                            Add to Cart
-                        </button>
-                    </a>
-                    <button
-                        class="w-full border border-purple-600 text-purple-600 py-3 rounded-lg mb-6 hover:bg-purple-50 transition duration-300">
-                        Add to Wishlist
-                    </button>
-                    <div class="space-y-4">
-                        <h3 class="font-bold text-lg">This course includes:</h3>
-                        <div class="flex items-center">
-                            <i class="fas fa-video mr-3 text-gray-600"></i>
-                            <span>20 hours of video content</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-file-alt mr-3 text-gray-600"></i>
-                            <span>15 coding exercises</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-trophy mr-3 text-gray-600"></i>
-                            <span>Certificate of completion</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-infinity mr-3 text-gray-600"></i>
-                            <span>Lifetime access</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
 

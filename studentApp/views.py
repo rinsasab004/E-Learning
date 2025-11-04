@@ -61,7 +61,7 @@ class StudentView(View):
             
         
         else:
-            return render(request,"student_home.html",{'courses':courses})
+            return render(request,"student_home.html",{'courses':courses,'courses_count':0})
 
 
 class CourseDetailView(View):
@@ -149,5 +149,15 @@ class PaymentConfirmation(View):
 
 class Mycourses(View):
     def get(self,request):
-        return render(request,"my_courses.html")
+        orders=Order.objects.filter(student=request.user)
+        return render(request,"my_courses.html",{'orders':orders})
+    
+class LessonView(View):
+    def get(self,request,**kwargs):
+        course_instance=Course.objects.get(id=kwargs.get("id"))
+        print(request.GET)
+        # module_id=request.Get.get("module")
+        # lesson_id=request.Get.get("lesson")
+        return render(request,"lesson.html",{'course':course_instance})
+
 
