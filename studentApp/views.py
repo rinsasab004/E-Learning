@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.views import View
-from instructorApp.models import Course,Cart,Order
+from instructorApp.models import Course,Cart,Order,Lesson,Module
 from instructorApp.forms import InstructorCreateForm
 from instructorApp.models import User
 from django.contrib.auth.models import User
@@ -156,8 +156,10 @@ class LessonView(View):
     def get(self,request,**kwargs):
         course_instance=Course.objects.get(id=kwargs.get("id"))
         print(request.GET)
-        # module_id=request.Get.get("module")
-        # lesson_id=request.Get.get("lesson")
-        return render(request,"lesson.html",{'course':course_instance})
+        module_id=request.GET.get("module") if "module" in request.GET else course_instance.module.all().first().id
+        module_instance=Module.objects.get(id=module_id)
+        lesson_id=request.GET.get("lesson") if "lesson" in request.GET else module_instance.lesson.all().first().id
+        lesson_instance=Lesson.objects.get(id=lesson_id)
+        return render(request,"lesson.html",{'course':course_instance,'lesson':lesson_instance})
 
 
